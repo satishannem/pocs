@@ -239,6 +239,4 @@ public class AddDeleteUpdateGird implements EntryPoint ,IsWidget{
 		RootPanel.get("editableGrid").add(asWidget());
 
 	}
-
-	
 }
