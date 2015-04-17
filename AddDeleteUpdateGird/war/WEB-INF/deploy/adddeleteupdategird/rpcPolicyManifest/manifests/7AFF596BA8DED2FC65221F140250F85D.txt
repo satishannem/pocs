@@ -1,2 +1,0 @@
-serviceClass: com.sample.client.PersonService
-path: 324C86422B375ED6E0D2BAA27D1513A2.gwt.rpc

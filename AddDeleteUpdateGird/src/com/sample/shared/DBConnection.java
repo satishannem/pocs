@@ -38,5 +38,13 @@ public class DBConnection {
 		} 
 		return con;
 	}
+	public void closeConecction(Connection con){
+		try {
+			con.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 }

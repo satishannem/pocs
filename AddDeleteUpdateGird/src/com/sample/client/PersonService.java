@@ -9,6 +9,7 @@ import com.sencha.gxt.data.shared.loader.PagingLoadResult;
 public interface PersonService extends RemoteService {
 	PagingLoadResult<Person> getAllPersons(PagingLoadConfig config);
 
-	
+	void addPerson(Person person);
+	void deletePerson(int id);
 
 }

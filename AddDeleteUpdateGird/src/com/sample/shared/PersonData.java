@@ -40,7 +40,7 @@ public class PersonData implements IsSerializable, PagingLoadResult<Person> {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
+		DBConnection.getInstance().closeConecction(con);
 		return person;
 	}
 
@@ -66,4 +66,6 @@ public class PersonData implements IsSerializable, PagingLoadResult<Person> {
 		this.totalLength = totalLength;
 
 	}
+	
+	
 }

@@ -6,11 +6,12 @@ import com.sencha.gxt.data.shared.loader.PagingLoadResult;
 
 public interface PersonServiceAsync {
 
-	/*void addPerson(Person perons, AsyncCallback<Void> callback);*/
-
-	
-
 	void getAllPersons(PagingLoadConfig config,
 			AsyncCallback<PagingLoadResult<Person>> callback);
+	 
+	void addPerson(Person person, AsyncCallback<Void> callback);
+	
+	void deletePerson(int id, AsyncCallback<Void> callback);
+	  
 
 }
