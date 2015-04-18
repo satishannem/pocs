@@ -2,6 +2,7 @@ package com.sample.server;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +49,7 @@ public class PersonServiceImpl extends RemoteServiceServlet implements
 			String sql="insert into persondetails values(?,?,?,?,?)";
 			try {
 				PreparedStatement preparedStatement = con.prepareStatement(sql);
-				preparedStatement.setInt(1, person.getId());
+				preparedStatement.setInt(1,person.getId());
 				preparedStatement.setString(2, person.getFname());
 				preparedStatement.setString(3, person.getLname());
 				preparedStatement.setString(4, person.getPhone());

@@ -1,7 +1,7 @@
 package com.sample.client;
 
-
 import java.util.ArrayList;
+import java.util.Random;
 
 import java_cup.terminal;
 
@@ -12,6 +12,11 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyDownEvent;
+import com.google.gwt.event.dom.client.KeyDownHandler;
+import com.google.gwt.event.dom.client.KeyPressEvent;
+import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -20,6 +25,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.sample.shared.FieldVerifier;
 import com.sencha.gxt.cell.core.client.ButtonCell.ButtonArrowAlign;
 import com.sencha.gxt.core.client.IdentityValueProvider;
 import com.sencha.gxt.core.client.ValueProvider;
@@ -44,6 +50,7 @@ import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
 import com.sencha.gxt.widget.core.client.form.CheckBox;
 import com.sencha.gxt.widget.core.client.form.NumberField;
 import com.sencha.gxt.widget.core.client.form.TextField;
+import com.sencha.gxt.widget.core.client.form.validator.MinLengthValidator;
 import com.sencha.gxt.widget.core.client.grid.CheckBoxSelectionModel;
 import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
@@ -57,11 +64,12 @@ import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent.Selecti
 import com.sencha.gxt.widget.core.client.toolbar.PagingToolBar;
 import com.sencha.gxt.widget.core.client.toolbar.ToolBar;
 
-public class AddDeleteUpdateGird implements EntryPoint ,IsWidget{
+public class AddDeleteUpdateGird implements EntryPoint, IsWidget {
 
 	private ContentPanel panel;
 	private static final int REFRESH_INTERVAL = 5000; // ms
 	private PersonServiceAsync Service = GWT.create(PersonService.class);
+	
 
 	@Override
 	public Widget asWidget() {
@@ -71,7 +79,7 @@ public class AddDeleteUpdateGird implements EntryPoint ,IsWidget{
 				@Override
 				public void load(PagingLoadConfig loadConfig,
 						AsyncCallback<PagingLoadResult<Person>> callback) {
-					
+
 					Service.getAllPersons(loadConfig, callback);
 				}
 			};
@@ -102,7 +110,10 @@ public class AddDeleteUpdateGird implements EntryPoint ,IsWidget{
 					super.onRefresh(event);
 				}
 			};
-			/* RowNumberer<Person> numbererColumn = new RowNumberer<Person>(identity);*/
+			/*
+			 * RowNumberer<Person> numbererColumn = new
+			 * RowNumberer<Person>(identity);
+			 */
 			ColumnConfig<Person, Integer> idColumn = new ColumnConfig<Person, Integer>(
 					props.id(), 150, "ID");
 			ColumnConfig<Person, String> fnameColumn = new ColumnConfig<Person, String>(
@@ -116,7 +127,7 @@ public class AddDeleteUpdateGird implements EntryPoint ,IsWidget{
 
 			ArrayList<ColumnConfig<Person, ?>> columns = new ArrayList<ColumnConfig<Person, ?>>();
 			// The selection model provides the first column config
-	/*		columns.add(numbererColumn);*/
+			/* columns.add(numbererColumn); */
 			columns.add(selectionModel.getColumn());
 			columns.add(idColumn);
 			columns.add(fnameColumn);
@@ -124,8 +135,6 @@ public class AddDeleteUpdateGird implements EntryPoint ,IsWidget{
 			columns.add(phoneColumn);
 			columns.add(emailColumn);
 
-			
-			
 			ColumnModel<Person> cm = new ColumnModel<Person>(columns);
 
 			final Grid<Person> grid = new Grid<Person>(store, cm) {
@@ -147,45 +156,39 @@ public class AddDeleteUpdateGird implements EntryPoint ,IsWidget{
 			grid.setLoader(loader);
 			grid.setColumnReordering(true);
 			grid.getView().setAutoExpandColumn(fnameColumn);
-			/*numbererColumn.initPlugin(grid);*/
-			
+			/* numbererColumn.initPlugin(grid); */
 
-		    final TextField fname = new TextField();
-			final TextField lname = new TextField();
-			final TextField phone = new TextField();
-			final TextField email = new TextField();
-			
-			
-			
-			final GridEditing<Person> editing = new GridInlineEditing<Person>(grid);
-			/*editing.addEditor(idColumn, , Integer.parseInt(id));*/
+			 	final TextField fname = new TextField();
+			 	final TextField lname = new TextField();
+				final TextField phone = new TextField();
+				final TextField email = new TextField();
+			final GridEditing<Person> editing = new GridInlineEditing<Person>(
+					grid);
+			/* editing.addEditor(idColumn, , Integer.parseInt(id)); */
 			editing.addEditor(fnameColumn, fname);
 			editing.addEditor(lnameColumn, lname);
 			editing.addEditor(phoneColumn, phone);
 			editing.addEditor(emailColumn, email);
-			
-		
-			
+
 			TextButton addButton = new TextButton("Add Persons");
 			addButton.addSelectHandler(new SelectHandler() {
 				@Override
 				public void onSelect(SelectEvent event) {
 					Person p = new Person();
-					
-					/*p.setFname(fname.getText());
-					p.setFname(fname.getText());
-					p.setFname(fname.getText());
-					p.setFname(fname.getText());*/
-					
-					store.add(0,p);
+
+					/*
+					 * p.setFname(fname.getText()); p.setFname(fname.getText());
+					 * p.setFname(fname.getText()); p.setFname(fname.getText());
+					 */
+
+					store.add(0, p);
 					editing.cancelEditing();
 					int row = store.indexOf(p);
 					editing.startEditing((new GridCell(row, 0)));
-					
-					
+
 				}
 			});
-			
+
 			final CheckBox warnLoad = new CheckBox();
 			warnLoad.setBoxLabel("Warn before loading new data");
 			warnLoad.setValue(false);
@@ -193,7 +196,6 @@ public class AddDeleteUpdateGird implements EntryPoint ,IsWidget{
 			final PagingToolBar toolBar = new PagingToolBar(10);
 			toolBar.getElement().getStyle().setProperty("borderBottom", "none");
 			toolBar.bind(loader);
-	
 
 			VerticalLayoutContainer verticalLayoutContainer = new VerticalLayoutContainer();
 			verticalLayoutContainer.setBorders(true);
@@ -220,78 +222,74 @@ public class AddDeleteUpdateGird implements EntryPoint ,IsWidget{
 				}
 			});
 			
+			email.addKeyDownHandler(new KeyDownHandler() {
+				public void onKeyDown(KeyDownEvent event) {
+					if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
+			
+							addPerson(fname.getText(), lname.getText(), phone.getText(), email.getText());
+							loader.load();
+					}
+				}
+			});
+
 			Button reset = new Button("Reset");
 			reset.addClickHandler(new ClickHandler() {
-				
+
 				@Override
 				public void onClick(ClickEvent event) {
-				store.rejectChanges();
+					loader.load();
+					store.rejectChanges();
 					
 				}
 			});
 			Button save = new Button("Save");
 			save.addClickHandler(new ClickHandler() {
-				
+
 				@Override
 				public void onClick(ClickEvent event) {
-					Person person =new Person();
 					
-					person.setFname(fname.getText());
-					person.setLname(lname.getText());
-					person.setPhone(phone.getText());
-					person.setEmailId(email.getText());
-					store.add(person);
-					
-					 ServiceDefTarget serviceDef = (ServiceDefTarget) Service;
-					 serviceDef.setServiceEntryPoint(GWT.getModuleBaseURL()
-					 + "person"); 
-					 
-					 Service.addPerson(person, new AsyncCallback<Void>() {
-
-						@Override
-						public void onFailure(Throwable caught) {	
-						}
-
-						@Override
-						public void onSuccess(Void result) {
-							Window.alert("Person addition successful");
-						}
-					});
-					
+						addPerson(fname.getText(), lname.getText(), phone.getText(), email.getText());
+						loader.load();
 				}
 			});
-			
-			final TextButton removeButton = new TextButton("Remove Selected Row(s)");
-		    removeButton.setEnabled(false);
-		    SelectHandler removeSelectHandler = new SelectHandler() {
+
+			final TextButton removeButton = new TextButton(
+					"Remove Selected Row(s)");
+			removeButton.setEnabled(false);
+			SelectHandler removeSelectHandler = new SelectHandler() {
 				@Override
 				public void onSelect(SelectEvent event) {
-					for (Person person : grid.getSelectionModel().getSelectedItems()) {
-			            grid.getStore().remove(person);
-			            int id = person.getId();
-			            ServiceDefTarget serviceDef = (ServiceDefTarget) Service;
-						 serviceDef.setServiceEntryPoint(GWT.getModuleBaseURL()
-						 + "person"); 
-						 Service.deletePerson(id, new AsyncCallback<Void>() {
+					for (Person person : grid.getSelectionModel()
+							.getSelectedItems()) {
+						grid.getStore().remove(person);
+						int id = person.getId();
+						ServiceDefTarget serviceDef = (ServiceDefTarget) Service;
+						serviceDef.setServiceEntryPoint(GWT.getModuleBaseURL()
+								+ "person");
+						Service.deletePerson(id, new AsyncCallback<Void>() {
 							@Override
 							public void onFailure(Throwable caught) {
 							}
+
 							@Override
 							public void onSuccess(Void result) {
-								
+
 							}
 						});
-			          }
+					}
 				}
 			};
 			removeButton.addSelectHandler(removeSelectHandler);
-		      grid.getSelectionModel().addSelectionChangedHandler(new SelectionChangedHandler<Person>() {
-		        @Override
-		        public void onSelectionChanged(SelectionChangedEvent<Person> event) {
-		          removeButton.setEnabled(!event.getSelection().isEmpty());
-		        }
-		    });
-		    
+			grid.getSelectionModel().addSelectionChangedHandler(
+					new SelectionChangedHandler<Person>() {
+						@Override
+						public void onSelectionChanged(
+								SelectionChangedEvent<Person> event) {
+							removeButton.setEnabled(!event.getSelection()
+									.isEmpty());
+						}
+					});
+
 			panel = new FramedPanel();
 			panel.setCollapsible(true);
 			panel.setHeadingText("Paging Grid Example");
@@ -317,6 +315,33 @@ public class AddDeleteUpdateGird implements EntryPoint ,IsWidget{
 		};
 		refreshTimer.scheduleRepeating(REFRESH_INTERVAL);
 		RootPanel.get("editableGrid").add(asWidget());
+	}
 
+	private void addPerson(String fname,String lname,String phone,String email) {
+
+		Person person = new Person();
+		Random random = new Random();
+		person.setId(random.nextInt(1000));
+		person.setFname(fname);
+		person.setLname(lname);
+		person.setPhone(phone);
+		person.setEmailId(email);
+
+		ServiceDefTarget serviceDef = (ServiceDefTarget) Service;
+		serviceDef.setServiceEntryPoint(GWT.getModuleBaseURL() + "person");
+
+		Service.addPerson(person, new AsyncCallback<Void>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+			}
+
+			@Override
+			public void onSuccess(Void result) {
+				Window.alert("Person addition successful");
+			}
+		});
+		
+		
 	}
 }
